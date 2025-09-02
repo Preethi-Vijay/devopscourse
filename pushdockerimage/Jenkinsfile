@@ -2,20 +2,13 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDS = credentials('dockerhub')
+        DOCKERHUB_CREDS = credentials('dockerhub') // Jenkins credential ID
     }
 
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Preethi-Vijay/devopscourse.git'
-            }
-        }
-
-        stage('Clone Repo') {
-            steps {
-                checkout scm
-                sh 'ls *'
             }
         }
 
