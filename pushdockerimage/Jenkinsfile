@@ -1,48 +1,46 @@
 pipeline {
     agent any
-	tools {
-        git 'Default'   // <-- name you gave under "Git installations"
+
+    environment {
+        DOCKERHUB_CREDS = credentials('dockerhub')
     }
+
     stages {
         stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/Preethi-Vijay/devopscourse.git'
             }
         }
-    }
-    environment{
-        DOCKERHUB_CREDS = credentials('dockerhub')
-    }
-    stages {
+
         stage('Clone Repo') {
             steps {
                 checkout scm
                 sh 'ls *'
             }
         }
+
         stage('Build Image') {
             steps {
-                //sh 'docker build -t dockercorona/jenkinstest ./pushdockerimage/' (this will use the tag latest)
-		sh 'docker build -t dockercorona/jenkinstest:$BUILD_NUMBER ./pushdockerimage/'
+                sh 'docker build -t dockercorona/jenkinstest:$BUILD_NUMBER ./pushdockerimage/'
             }
         }
+
         stage('Docker Login') {
             steps {
-                //sh 'docker login -u $DOCKERHUB_CREDS_USR -p $DOCKERHUB_CREDS_PSW' (this will leave the password visible)
-                sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'                
-                }
-            }
-        stage('Docker Push') {
-            steps {
-		//sh 'docker push dockercorona/jenkinstest' (this will use the tag latest)    
-                sh 'docker push dockercorona/jenkinstest:$BUILD_NUMBER'
-                }
+                sh 'echo $DOCKERHUB_CREDS_PSW | docker login -u $DOCKERHUB_CREDS_USR --password-stdin'
             }
         }
-    post {
-		always {
-			sh 'docker logout'
-		}
-	 }
+
+        stage('Docker Push') {
+            steps {
+                sh 'docker push dockercorona/jenkinstest:$BUILD_NUMBER'
+            }
+        }
     }
 
+    post {
+        always {
+            sh 'docker logout'
+        }
+    }
+}
