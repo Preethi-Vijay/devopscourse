@@ -1,7 +1,7 @@
 pipeline {
     agent any
     environment {
-        DOCKERHUB = credentials('dockerhub')  // use the ID from Jenkins credentials
+        DOCKERHUB = credentials('dockerhub')   // match the ID you set in Jenkins
     }
     stages {
         stage('Build Image') {
