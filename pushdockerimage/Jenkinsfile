@@ -1,5 +1,15 @@
 pipeline {
     agent any
+	tools {
+        git 'Default'   // <-- name you gave under "Git installations"
+    }
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/Preethi-Vijay/devopscourse.git'
+            }
+        }
+    }
     environment{
         DOCKERHUB_CREDS = credentials('dockerhub')
     }
